@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import { Cloud, Settings, RefreshCw } from 'lucide-react';
 import { useWeather } from './hooks/useWeather';
