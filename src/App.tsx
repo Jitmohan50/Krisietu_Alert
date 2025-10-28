@@ -1,7 +1,11 @@
+import React from 'react';
 import { useState } from 'react';
 import { Cloud, Settings, RefreshCw } from 'lucide-react';
 import { useWeather } from './hooks/useWeather';
+import { useTranslation } from './hooks/useTranslation';
 import { LocationSearch } from './components/LocationSearch';
+import { LanguageSelector } from './components/LanguageSelector';
+import { TranslatedText } from './components/TranslatedText';
 import { CurrentWeather } from './components/CurrentWeather';
 import { CropAlerts } from './components/CropAlerts';
 import { FarmingConditions } from './components/FarmingConditions';
@@ -23,6 +27,7 @@ function App() {
     getCurrentLocationWeather, 
     retry 
   } = useWeather();
+  const { currentLanguage, isTranslating, translate, changeLanguage } = useTranslation();
   const [unit, setUnit] = useState<'celsius' | 'fahrenheit'>('celsius');
 
   const handleLocationSelect = (location: string) => {
@@ -53,16 +58,32 @@ function App() {
                 <Cloud className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">KrisiSetu Alerts</h1>
-                <p className="text-sm text-gray-600">Smart farming weather alerts & recommendations</p>
+                <TranslatedText 
+                  text="KrisiSetu" 
+                  translate={translate}
+                  tag="h1"
+                  className="text-2xl font-bold text-gray-900"
+                />
+                <TranslatedText 
+                  text="Farming weather alerts & recommendations" 
+                  translate={translate}
+                  tag="p"
+                  className="text-sm text-gray-600"
+                />
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
+              <LanguageSelector
+                currentLanguage={currentLanguage}
+                onLanguageChange={changeLanguage}
+                isTranslating={isTranslating}
+              />
               {lastUpdate && (
                 <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
                   <RefreshCw className="w-4 h-4" />
-                  <span>Updated: {formatLastUpdate(lastUpdate)}</span>
+                  <TranslatedText text="Updated" translate={translate} />
+                  <span>: {formatLastUpdate(lastUpdate)}</span>
                 </div>
               )}
               <button
@@ -85,6 +106,7 @@ function App() {
           onLocationSelect={handleLocationSelect}
           onCurrentLocation={getCurrentLocationWeather}
           loading={loading}
+          translate={translate}
         />
 
         {error && (
@@ -98,25 +120,35 @@ function App() {
         {weather && (
           <div className="space-y-6">
             {/* Current Weather */}
-            <CurrentWeather weather={weather} unit={unit} />
+            <CurrentWeather weather={weather} unit={unit} translate={translate} />
 
             {/* Crop Alerts */}
-            <CropAlerts alerts={cropAlerts} />
+            <CropAlerts alerts={cropAlerts} translate={translate} />
 
             {/* Farming Conditions */}
             {farmingConditions && (
-              <FarmingConditions conditions={farmingConditions} />
+              <FarmingConditions conditions={farmingConditions} translate={translate} />
             )}
 
             {/* Crop Recommendations */}
-            <CropRecommendations recommendations={cropRecommendations} />
+            <CropRecommendations 
+              recommendations={cropRecommendations} 
+              weather={weather}
+              farmingConditions={farmingConditions}
+              translate={translate} 
+            />
 
             {/* 7-Day Forecast */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">7-Day Forecast</h2>
+              <TranslatedText 
+                text="7-Day Forecast" 
+                translate={translate}
+                tag="h2"
+                className="text-2xl font-bold text-gray-900 mb-4"
+              />
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
                 {weather.forecast.forecastday.map((day, index) => (
-                  <ForecastCard key={index} forecast={day} unit={unit} />
+                  <ForecastCard key={index} forecast={day} unit={unit} translate={translate} />
                 ))}
               </div>
             </div>
@@ -128,12 +160,18 @@ function App() {
       <footer className="bg-white border-t mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-gray-600">
-            <p className="text-sm">
-              Smart weather monitoring for modern agriculture
-            </p>
-            <p className="text-xs mt-2">
-              Real-time weather data with AI-powered farming recommendations.
-            </p>
+            <TranslatedText 
+              text="KrisiSetu - Smart weather monitoring" 
+              translate={translate}
+              tag="p"
+              className="text-sm"
+            />
+            <TranslatedText 
+              text="Real-time weather data with AI-powered farming recommendations." 
+              translate={translate}
+              tag="p"
+              className="text-xs mt-2"
+            />
           </div>
         </div>
       </footer>

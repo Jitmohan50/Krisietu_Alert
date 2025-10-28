@@ -1,12 +1,14 @@
 import React from 'react';
 import { ForecastDay } from '../types/weather';
+import { TranslatedText } from './TranslatedText';
 
 interface ForecastCardProps {
   forecast: ForecastDay;
   unit: 'celsius' | 'fahrenheit';
+  translate: (text: string) => Promise<string>;
 }
 
-export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, unit }) => {
+export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, unit, translate }) => {
   const { day, date } = forecast;
   
   const maxTemp = unit === 'celsius' ? day.maxtemp_c : day.maxtemp_f;
@@ -28,11 +30,27 @@ export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, unit }) =>
     }
   };
 
+  const [translatedDate, setTranslatedDate] = React.useState(formatDate(date));
+  const [translatedCondition, setTranslatedCondition] = React.useState(day.condition.text);
+
+  React.useEffect(() => {
+    const translateTexts = async () => {
+      const dateText = formatDate(date);
+      const [translatedDateText, translatedConditionText] = await Promise.all([
+        translate(dateText),
+        translate(day.condition.text)
+      ]);
+      setTranslatedDate(translatedDateText);
+      setTranslatedCondition(translatedConditionText);
+    };
+
+    translateTexts();
+  }, [date, day.condition.text, translate]);
   return (
     <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200">
       <div className="text-center">
         <h3 className="font-semibold text-gray-800 mb-2">
-          {formatDate(date)}
+          {translatedDate}
         </h3>
         
         <img 
@@ -42,7 +60,7 @@ export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, unit }) =>
         />
         
         <p className="text-sm text-gray-600 mb-3 capitalize">
-          {day.condition.text}
+          {translatedCondition}
         </p>
         
         <div className="flex justify-between items-center mb-3">
@@ -56,15 +74,15 @@ export const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, unit }) =>
         
         <div className="space-y-2 text-xs text-gray-600">
           <div className="flex justify-between">
-            <span>Rain:</span>
+            <TranslatedText text="Rain" translate={translate} />:
             <span>{day.daily_chance_of_rain}%</span>
           </div>
           <div className="flex justify-between">
-            <span>Humidity:</span>
+            <TranslatedText text="Humidity" translate={translate} />:
             <span>{day.avghumidity}%</span>
           </div>
           <div className="flex justify-between">
-            <span>UV:</span>
+            <TranslatedText text="UV" translate={translate} />:
             <span>{day.uv}</span>
           </div>
         </div>

@@ -10,13 +10,15 @@ import {
   Clock
 } from 'lucide-react';
 import { WeatherData } from '../types/weather';
+import { TranslatedText } from './TranslatedText';
 
 interface CurrentWeatherProps {
   weather: WeatherData;
   unit: 'celsius' | 'fahrenheit';
+  translate: (text: string) => Promise<string>;
 }
 
-export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit }) => {
+export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit, translate }) => {
   const { current, location } = weather;
   
   const temperature = unit === 'celsius' ? current.temp_c : current.temp_f;
@@ -55,10 +57,10 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
               {Math.round(temperature)}{tempUnit}
             </div>
             <div className="text-lg text-gray-600 capitalize">
-              {current.condition.text}
+              <TranslatedText text={current.condition.text} translate={translate} />
             </div>
             <div className="text-sm text-gray-500">
-              Feels like {Math.round(feelsLike)}{tempUnit}
+              <TranslatedText text="Feels like" translate={translate} /> {Math.round(feelsLike)}{tempUnit}
             </div>
           </div>
         </div>
@@ -68,7 +70,7 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
           <div className="bg-blue-50 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
               <Wind className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium text-blue-800">Wind</span>
+              <TranslatedText text="Wind" translate={translate} className="text-sm font-medium text-blue-800" />
             </div>
             <div className="text-lg font-semibold text-blue-900">
               {windSpeed} {windUnit}
@@ -79,7 +81,7 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
           <div className="bg-green-50 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
               <Droplets className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium text-green-800">Humidity</span>
+              <TranslatedText text="Humidity" translate={translate} className="text-sm font-medium text-green-800" />
             </div>
             <div className="text-lg font-semibold text-green-900">
               {current.humidity}%
@@ -89,7 +91,7 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
           <div className="bg-purple-50 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
               <Gauge className="w-5 h-5 text-purple-600" />
-              <span className="text-sm font-medium text-purple-800">Pressure</span>
+              <TranslatedText text="Pressure" translate={translate} className="text-sm font-medium text-purple-800" />
             </div>
             <div className="text-lg font-semibold text-purple-900">
               {current.pressure_mb} mb
@@ -99,7 +101,7 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
           <div className="bg-orange-50 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
               <Eye className="w-5 h-5 text-orange-600" />
-              <span className="text-sm font-medium text-orange-800">Visibility</span>
+              <TranslatedText text="Visibility" translate={translate} className="text-sm font-medium text-orange-800" />
             </div>
             <div className="text-lg font-semibold text-orange-900">
               {visibility} {visUnit}
@@ -113,7 +115,7 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Sun className="w-5 h-5 text-yellow-600" />
-            <span className="text-sm font-medium text-yellow-800">UV Index</span>
+            <TranslatedText text="UV Index" translate={translate} className="text-sm font-medium text-yellow-800" />
           </div>
           <div className="flex items-center space-x-2">
             <div className="text-lg font-semibold text-yellow-900">
@@ -126,10 +128,13 @@ export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, unit })
               current.uv <= 10 ? 'bg-red-100 text-red-800' :
               'bg-purple-100 text-purple-800'
             }`}>
-              {current.uv <= 2 ? 'Low' :
-               current.uv <= 5 ? 'Moderate' :
-               current.uv <= 7 ? 'High' :
-               current.uv <= 10 ? 'Very High' : 'Extreme'}
+              <TranslatedText 
+                text={current.uv <= 2 ? 'Low' :
+                     current.uv <= 5 ? 'Moderate' :
+                     current.uv <= 7 ? 'High' :
+                     current.uv <= 10 ? 'Very High' : 'Extreme'}
+                translate={translate}
+              />
             </div>
           </div>
         </div>

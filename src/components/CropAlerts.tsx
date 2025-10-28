@@ -10,12 +10,14 @@ import {
   Thermometer
 } from 'lucide-react';
 import { CropAlert } from '../types/farmer';
+import { TranslatedText } from './TranslatedText';
 
 interface CropAlertsProps {
   alerts: CropAlert[];
+  translate: (text: string) => Promise<string>;
 }
 
-export const CropAlerts: React.FC<CropAlertsProps> = ({ alerts }) => {
+export const CropAlerts: React.FC<CropAlertsProps> = ({ alerts, translate }) => {
   const getAlertIcon = (alertType: string) => {
     switch (alertType) {
       case 'irrigation': return <Droplets className="w-5 h-5" />;
@@ -56,8 +58,8 @@ export const CropAlerts: React.FC<CropAlertsProps> = ({ alerts }) => {
             <Sprout className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-green-800">All Clear!</h3>
-            <p className="text-green-700">No active crop alerts at this time. Conditions are favorable for farming operations.</p>
+            <TranslatedText text="All Clear!" translate={translate} tag="h3" className="text-lg font-semibold text-green-800" />
+            <TranslatedText text="No active crop alerts at this time. Conditions are favorable for farming operations." translate={translate} tag="p" className="text-green-700" />
           </div>
         </div>
       </div>
@@ -66,10 +68,9 @@ export const CropAlerts: React.FC<CropAlertsProps> = ({ alerts }) => {
 
   return (
     <div className="mb-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+      <TranslatedText text="Active Crop Alerts" translate={translate} tag="h2" className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
         <AlertTriangle className="w-6 h-6 mr-2 text-orange-600" />
-        Active Crop Alerts
-      </h2>
+      </TranslatedText>
       
       <div className="space-y-4">
         {alerts.map((alert) => (
@@ -81,37 +82,37 @@ export const CropAlerts: React.FC<CropAlertsProps> = ({ alerts }) => {
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold">{alert.title}</h3>
+                  <TranslatedText text={alert.title} translate={translate} tag="h3" className="text-xl font-semibold" />
                   <div className="flex items-center space-x-2">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getSeverityBadgeColor(alert.severity)}`}>
-                      {alert.severity.toUpperCase()}
+                      <TranslatedText text={alert.severity.toUpperCase()} translate={translate} />
                     </span>
                     <span className="text-sm bg-white bg-opacity-50 px-2 py-1 rounded">
-                      {alert.cropType}
+                      <TranslatedText text={alert.cropType} translate={translate} />
                     </span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h4 className="font-medium mb-2">Description:</h4>
-                    <p className="text-sm leading-relaxed">{alert.description}</p>
+                    <TranslatedText text="Description:" translate={translate} tag="h4" className="font-medium mb-2" />
+                    <TranslatedText text={alert.description} translate={translate} tag="p" className="text-sm leading-relaxed" />
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-2">Recommended Action:</h4>
-                    <p className="text-sm leading-relaxed">{alert.recommendation}</p>
+                    <TranslatedText text="Recommended Action:" translate={translate} tag="h4" className="font-medium mb-2" />
+                    <TranslatedText text={alert.recommendation} translate={translate} tag="p" className="text-sm leading-relaxed" />
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-6 text-sm">
                   <div className="flex items-center space-x-1">
                     <Clock className="w-4 h-4" />
-                    <span><strong>Timeframe:</strong> {alert.timeframe}</span>
+                    <span><TranslatedText text="Timeframe" translate={translate} tag="strong" />: <TranslatedText text={alert.timeframe} translate={translate} /></span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Thermometer className="w-4 h-4" />
-                    <span><strong>Conditions:</strong> {alert.weatherCondition}</span>
+                    <span><TranslatedText text="Conditions" translate={translate} tag="strong" />: <TranslatedText text={alert.weatherCondition} translate={translate} /></span>
                   </div>
                 </div>
               </div>
